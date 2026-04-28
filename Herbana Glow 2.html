@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Herbana Glow — Rooted in Nature</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+    <style>
+        :root {
+            --deep-green: #1F4529;
+            --soft-green: #47663B;
+            --amber: #E88D67;
+            --cream: #FAF7F2;
+            --linen: #EADDCA;
+            --white: #FFFFFF;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--cream); 
+            color: var(--deep-green); 
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- Custom Cursor --- */
+        .cursor {
+            width: 20px; height: 20px;
+            border: 1px solid var(--amber);
+            border-radius: 50%;
+            position: fixed; pointer-events: none;
+            z-index: 9999; transition: transform 0.1s ease;
+        }
+
+        /* --- Layout & Shapes --- */
+        .section-container {
+            position: relative;
+            padding: 100px 10%;
+            width: 100%;
+        }
+
+        .curve-top {
+            border-radius: 100% 100% 0 0 / 50px 50px 0 0;
+            margin-top: -50px;
+        }
+
+        /* --- Navigation --- */
+        nav {
+            position: fixed; top: 30px; left: 50%;
+            transform: translateX(-50%);
+            width: 90%; max-width: 1200px;
+            padding: 15px 40px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 100px;
+            z-index: 1000;
+        }
+        .nav-logo { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 1.5rem; text-decoration: none; color: var(--deep-green); }
+        .nav-links a { text-decoration: none; color: var(--deep-green); margin: 0 15px; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- Hero Section --- */
+        .hero {
+            height: 100vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            background: radial-gradient(circle at 50% 50%, #fdfbf8 0%, #eaddca 100%);
+            padding-top: 100px;
+        }
+        .hero-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(4rem, 10vw, 8rem);
+            line-height: 0.9; font-weight: 300;
+            position: relative; z-index: 10;
+        }
+        .hero-title em { font-style: italic; color: var(--amber); }
+
+        /* --- Floating Elements (The Overlaps) --- */
+        .floating-leaf {
+            position: absolute;
+            z-index: 5; pointer-events: none;
+            opacity: 0.8;
+        }
+        .leaf-1 { top: 15%; left: 5%; width: 250px; transform: rotate(-20deg); }
+        .leaf-2 { top: 60%; right: -5%; width: 300px; transform: rotate(15deg); }
+        .leaf-3 { bottom: -10%; left: 15%; width: 200px; z-index: 20; }
+
+        /* --- Story Section (Curved) --- */
+        .story {
+            background-color: var(--deep-green);
+            color: var(--white);
+            border-radius: 120px 120px 0 0;
+            padding-top: 150px;
+            padding-bottom: 150px;
+            margin-top: -80px;
+            z-index: 15;
+        }
+        .story-content {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 80px; align-items: center;
+        }
+        .story-image-wrap {
+            position: relative;
+            height: 600px; width: 100%;
+            border-radius: 300px 300px 100px 100px; /* Feastie style asymmetrical curves */
+            overflow: hidden;
+            background: #2d5a36;
+        }
+
+        /* --- Product Grid (Asymmetrical) --- */
+        .products {
+            background: var(--white);
+            padding-top: 150px;
+            border-radius: 0 0 120px 120px;
+            margin-bottom: 100px;
+        }
+        .product-grid {
+            display: flex; flex-wrap: wrap; gap: 40px; justify-content: center;
+        }
+        .product-card {
+            width: 350px;
+            position: relative;
+            transition: transform 0.5s ease;
+        }
+        .product-card:nth-child(even) { margin-top: 80px; } /* Staggered look */
+        
+        .product-visual {
+            height: 450px;
+            background: var(--cream);
+            border-radius: 175px 175px 20px 20px; /* Curved tops */
+            margin-bottom: 20px;
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+        .product-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; }
+
+        /* --- Animated "Blob" Decorative Backgrounds --- */
+        .blob-bg {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            filter: blur(80px);
+            opacity: 0.4;
+        }
+        .blob {
+            position: absolute; background: var(--amber);
+            width: 400px; height: 400px; border-radius: 50%;
+        }
+
+        /* --- CTA Section --- */
+        .cta {
+            height: 80vh;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center;
+            background: var(--cream);
+        }
+
+        /* --- Typography Helpers --- */
+        .split-line { overflow: hidden; }
+        .btn-round {
+            padding: 20px 40px;
+            border-radius: 100px;
+            border: 1px solid var(--deep-green);
+            text-transform: uppercase;
+            font-size: 0.7rem; letter-spacing: 2px;
+            background: transparent;
+            cursor: pointer; transition: 0.3s;
+        }
+        .btn-round:hover { background: var(--deep-green); color: white; }
+
+        /* --- SVG Plant Icons --- */
+        .botanical-svg { fill: var(--soft-green); }
+    </style>
+</head>
+<body>
+
+    <div class="cursor"></div>
+
+    <nav>
+        <a href="#" class="nav-logo">HERBANA</a>
+        <div class="nav-links">
+            <a href="#">Rituals</a>
+            <a href="#">The Source</a>
+            <a href="#">Shop</a>
+        </div>
+        <button class="btn-round" style="padding: 10px 25px;">Cart (0)</button>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="blob-bg">
+            <div class="blob" style="top: 10%; left: 20%;"></div>
+            <div class="blob" style="bottom: 10%; right: 20%; background: var(--soft-green);"></div>
+        </div>
+
+        <!-- Floating Botanical Overlaps -->
+        <svg class="floating-leaf leaf-1 botanical-svg" viewBox="0 0 100 100">
+            <path d="M50,0 C70,30 90,50 90,80 C90,100 70,100 50,100 C30,100 10,100 10,80 C10,50 30,30 50,0" />
+        </svg>
+
+        <h1 class="hero-title">
+            <div class="split-line">Naturally</div>
+            <div class="split-line"><em>Radiant.</em></div>
+        </h1>
+        <p style="max-width: 400px; margin-top: 30px; font-weight: 300;">Jamaican-born self-care, crafted with intentional botanicals and island soul.</p>
+        
+        <div style="margin-top: 50px;">
+            <button class="btn-round">Explore the Glow</button>
+        </div>
+    </section>
+
+    <!-- STORY -->
+    <section class="section-container story">
+        <!-- Overlapping Plant from Hero -->
+        <svg class="floating-leaf leaf-2 botanical-svg" style="fill: var(--amber)" viewBox="0 0 100 100">
+            <path d="M10,50 Q30,10 50,50 T90,50" stroke="currentColor" fill="none" stroke-width="2"/>
+            <circle cx="50" cy="50" r="20" fill="currentColor" opacity="0.3"/>
+        </svg>
+
+        <div class="story-content">
+            <div class="story-image-wrap reveal-image">
+                <div style="position:absolute; bottom: 40px; left: 40px; color: white;">
+                    <h2 style="font-family: 'Cormorant Garamond'; font-size: 3rem;">Grown with Soul.</h2>
+                </div>
+            </div>
+            <div class="story-text">
+                <h3 class="reveal-text" style="font-family: 'Cormorant Garamond'; font-size: 2.5rem; margin-bottom: 30px; font-weight: 300;">"We believe the earth provides everything we need to heal, glow, and find stillness."</h3>
+                <p class="reveal-text" style="opacity: 0.8; font-weight: 300; margin-bottom: 40px;">Herbana Glow isn't just skincare; it's a bridge between ancient Jamaican herbal wisdom and your modern daily ritual. Every bottle is hand-poured in small batches, ensuring the vibration of the plants remains intact.</p>
+                <button class="btn-round" style="border-color: white; color: white;">Read the Journal</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- PRODUCTS -->
+    <section class="section-container products">
+        <!-- Floating leaf overlapping into the white section -->
+        <svg class="floating-leaf leaf-3 botanical-svg" viewBox="0 0 100 100">
+            <path d="M50,100 C20,80 0,60 0,30 C0,10 20,0 50,0 C80,0 100,10 100,30 C100,60 80,80 50,100" />
+        </svg>
+
+        <div style="text-align: center; margin-bottom: 100px;">
+            <p style="text-transform: uppercase; letter-spacing: 3px; font-size: 0.7rem; margin-bottom: 10px;">The Collection</p>
+            <h2 style="font-family: 'Cormorant Garamond'; font-size: 4rem; font-weight: 300;">Sun-Kissed <em>Potions</em></h2>
+        </div>
+
+        <div class="product-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <div class="product-visual">
+                    <span style="font-size: 5rem;">🕯️</span>
+                </div>
+                <h3>Saffron & Sea Candle</h3>
+                <p style="font-size: 0.9rem; opacity: 0.6;">Coconut-Soy Ritual Blend</p>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-visual">
+                    <span style="font-size: 5rem;">🌿</span>
+                </div>
+                <h3>Root Glow Oil</h3>
+                <p style="font-size: 0.9rem; opacity: 0.6;">Infused Jamaican Botanicals</p>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-visual">
+                    <span style="font-size: 5rem;">✨</span>
+                </div>
+                <h3>Island Mist</h3>
+                <p style="font-size: 0.9rem; opacity: 0.6;">Hydrating Aura Spray</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <h2 style="font-family: 'Cormorant Garamond'; font-size: 5vw; font-weight: 300;">Ready to <em>Glow?</em></h2>
+        <div style="margin-top: 40px;">
+            <button class="btn-round" style="background: var(--deep-green); color: white;">Shop All Products</button>
+        </div>
+    </section>
+
+    <script>
+        // --- Custom Cursor ---
+        const cursor = document.querySelector('.cursor');
+        document.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.5 });
+        });
+
+        // --- GSAP Animations ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Parallax Floating Elements
+        gsap.to(".leaf-1", {
+            y: -150, rotate: 20,
+            scrollTrigger: { trigger: ".hero", scrub: 1 }
+        });
+
+        gsap.to(".leaf-2", {
+            y: 100, rotate: -10,
+            scrollTrigger: { trigger: ".story", scrub: 1 }
+        });
+
+        gsap.to(".leaf-3", {
+            y: -200, rotate: 45,
+            scrollTrigger: { trigger: ".products", scrub: 1 }
+        });
+
+        // Text Reveals
+        const splitTitles = document.querySelectorAll('.split-line');
+        gsap.from(splitTitles, {
+            y: 100, duration: 1.5, stagger: 0.2, ease: "power4.out"
+        });
+
+        // Story Image Mask Reveal (Feastie vibe)
+        gsap.from(".reveal-image", {
+            scale: 0.8, borderRadius: "50%", duration: 1.5,
+            scrollTrigger: {
+                trigger: ".story",
+                start: "top 80%",
+                end: "top 20%",
+                scrub: true
+            }
+        });
+
+        // Staggered Product Cards
+        gsap.from(".product-card", {
+            y: 100, opacity: 0, duration: 1, stagger: 0.3,
+            scrollTrigger: {
+                trigger: ".product-grid",
+                start: "top 80%"
+            }
+        });
+
+        // Mouse interaction for blobs
+        document.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const xPos = (clientX / window.innerWidth) - 0.5;
+            const yPos = (clientY / window.innerHeight) - 0.5;
+            
+            gsap.to(".blob", {
+                x: xPos * 50,
+                y: yPos * 50,
+                duration: 2,
+                ease: "power2.out"
+            });
+        });
+    </script>
+</body>
+</html>
